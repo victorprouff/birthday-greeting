@@ -1,12 +1,12 @@
 ﻿public static class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        String fileName = "employees.txt";
+        const string fileName = "employees.txt";
 
         try
         {
-            string[] lines = File.ReadAllLines(fileName);
+            var lines = File.ReadAllLines(fileName);
 
             Console.WriteLine("Reading file...");
             Boolean first_line = true;
@@ -20,16 +20,16 @@
                     }
                     else
                     {
-                        String[] tokens = line.Split(',');
+                        var tokens = line.Split(',');
                         for (int i = 0; i < tokens.Length; i++)
                             tokens[i] = tokens[i].Trim();
 
                         if (tokens.Length == 4)
                         {
-                            String[] date = tokens[2].Split('/');
+                            var date = tokens[2].Split('/');
                             if (date.Length == 3)
                             {
-                                DateTime cal = DateTime.Now;
+                                var cal = DateTime.Now;
 
                                 if (cal.Day == int.Parse(date[0]) && cal.Month == int.Parse(date[1]))
                                 {
@@ -56,11 +56,11 @@
 
             Console.WriteLine("Batch job done.");
         }
-        catch (FileNotFoundException ex)
+        catch (FileNotFoundException)
         {
             Console.WriteLine("Unable to open file '" + fileName + "'");
         }
-        catch (IOException ex)
+        catch (IOException)
         {
             Console.WriteLine("Error reading file '" + fileName + "'");
         }
@@ -68,7 +68,7 @@
         Console.ReadLine();
     }
 
-    public static void SendEmail(String to, String title, String body)
+    private static void SendEmail(string to, string title, string body)
     {
         Console.WriteLine("Sending email to : " + to);
         Console.WriteLine("Title: " + title);
