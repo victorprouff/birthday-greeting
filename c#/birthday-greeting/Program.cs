@@ -58,21 +58,23 @@ public static class Program
 
         if (IsTokensLengthValid(tokens))
         {
-            var date = GetElementsDate(tokens[2]);
+            var employee = new Employee(tokens[0], tokens[1], new Date(tokens[2]), tokens[3]);
 
-            if (IfDateValid(date))
+            var elementsDate = GetElementsDate(employee.Birthday.Value);
+
+            if (IfDateValid(elementsDate))
             {
-                if (IsBirthday(date))
+                if (IsBirthday(elementsDate))
                 {
                     EmailBroker.SendMessage(
-                        tokens[3],
+                        employee.Email,
                         "Joyeux Anniversaire !",
-                        $"Bonjour {tokens[0]},\nJoyeux Anniversaire !\nA bientôt,");
+                        $"Bonjour {employee.FirstName},\nJoyeux Anniversaire !\nA bientôt,");
                 }
             }
             else
             {
-                throw new Exception($"Cannot read birthdate for {tokens[0]} {tokens[1]}");
+                throw new Exception($"Cannot read birthdate for {employee.FirstName} {employee.LastName}");
             }
         }
         else
