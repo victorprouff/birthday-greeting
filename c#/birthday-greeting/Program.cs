@@ -18,17 +18,17 @@ public static class Program
         }
         catch (FileNotFoundException)
         {
-            Console.WriteLine("Unable to open file '" + fileName + "'");
+            Console.WriteLine($"Unable to open file '{fileName}'");
         }
         catch (IOException)
         {
-            Console.WriteLine("Error reading file '" + fileName + "'");
+            Console.WriteLine($"Error reading file '{fileName}'");
         }
 
         Console.ReadLine();
     }
 
-    private static void ProcessFile(string[] lines)
+    private static void ProcessFile(IEnumerable<string> lines)
     {
         var firstLine = true;
         // Boucle sur toutes les lignes
@@ -40,11 +40,10 @@ public static class Program
                 if (firstLine)
                 {
                     firstLine = false;
+                    continue;
                 }
-                else
-                {
-                    ProcessLine(line);
-                }
+
+                ProcessLine(line);
             }
             catch (Exception e)
             {
@@ -58,32 +57,26 @@ public static class Program
         // Découpe chaque ligne en éléments
         var tokens = line.Split(',');
 
-        // Nettoie les éléments en supprimant les espaces
-        for (var token = 0; token < tokens.Length; token++)
-            tokens[token] = tokens[token].Trim();
+        CleanTokens(tokens);
 
-        // S'il y a 4 éléments on fait le traitement sinon on throw une exception
-        if (tokens.Length == 4)
+        if (IsTokensLengthValid(tokens))
         {
             // On récupère la date
             var date = tokens[2].Split('/');
 
-            // Si la date ne contient pas 3 éléments on throw une exeption
-            if (date.Length == 3)
+            if (IfDateValid(date))
             {
-                // On récupère la date du jour
-                var currentDate = DateTime.Now;
-
-                // Si la date d'anniversaire correspond à la date du jour alors on envoie un email
-                if (currentDate.Day == int.Parse(date[0]) && currentDate.Month == int.Parse(date[1]))
+                if (IsBirthday(date))
                 {
-                    EmailBroker.SendEmail(tokens[3], "Joyeux Anniversaire !",
-                        "Bonjour " + tokens[0] + ",\nJoyeux Anniversaire !\nA bientôt,");
+                    EmailBroker.SendMessage(
+                        tokens[3],
+                        "Joyeux Anniversaire !",
+                        $"Bonjour {tokens[0]},\nJoyeux Anniversaire !\nA bientôt,");
                 }
             }
             else
             {
-                throw new Exception("Cannot read birthdate for " + tokens[0] + " " + tokens[1]);
+                throw new Exception($"Cannot read birthdate for {tokens[0]} {tokens[1]}");
             }
         }
         else
@@ -91,4 +84,19 @@ public static class Program
             throw new Exception("Invalid file format");
         }
     }
+
+    private static void CleanTokens(IList<string> tokens)
+    {
+        for (var token = 0; token < tokens.Count; token++)
+        {
+            tokens[token] = tokens[token].Trim();
+        }
+    }
+
+    private static bool IsTokensLengthValid(IReadOnlyCollection<string> tokens) => tokens.Count == 4;
+
+    private static bool IsBirthday(IReadOnlyList<string> date) =>
+        Now.Day == int.Parse(date[0]) && Now.Month == int.Parse(date[1]);
+
+    private static bool IfDateValid(IReadOnlyCollection<string> date) => date.Count == 3;
 }
