@@ -12,7 +12,7 @@ public static class Program
             var lines = File.ReadAllLines(fileName);
 
             Console.WriteLine("Reading file...");
-            ProcessFile(lines);
+            ProcessFile(lines.ToList());
 
             Console.WriteLine("Batch job done.");
         }
@@ -28,21 +28,14 @@ public static class Program
         Console.ReadLine();
     }
 
-    private static void ProcessFile(IEnumerable<string> lines)
+    private static void ProcessFile(IList<string> lines)
     {
-        var firstLine = true;
-        // Boucle sur toutes les lignes
+        RemoveFirstLine(lines);
+
         foreach (var line in lines)
         {
             try
             {
-                // Si première ligne ne pas faire le traitement
-                if (firstLine)
-                {
-                    firstLine = false;
-                    continue;
-                }
-
                 ProcessLine(line);
             }
             catch (Exception e)
@@ -52,17 +45,20 @@ public static class Program
         }
     }
 
+    private static void RemoveFirstLine(IList<string> lines)
+    {
+        lines.RemoveAt(0);
+    }
+
     private static void ProcessLine(string line)
     {
-        // Découpe chaque ligne en éléments
-        var tokens = line.Split(',');
+        var tokens = GetElementsLine(line);
 
         CleanTokens(tokens);
 
         if (IsTokensLengthValid(tokens))
         {
-            // On récupère la date
-            var date = tokens[2].Split('/');
+            var date = GetElementsDate(tokens[2]);
 
             if (IfDateValid(date))
             {
@@ -84,6 +80,10 @@ public static class Program
             throw new Exception("Invalid file format");
         }
     }
+
+    private static string[] GetElementsLine(string line) => line.Split(',');
+
+    private static string[] GetElementsDate(string date) => date.Split('/');
 
     private static void CleanTokens(IList<string> tokens)
     {
