@@ -1,6 +1,8 @@
-﻿public static class Program
+﻿namespace birthday_greeting;
+
+public static class Program
 {
-    static void Main()
+    private static void Main()
     {
         const string fileName = "employees.txt";
 
@@ -9,20 +11,20 @@
             var lines = File.ReadAllLines(fileName);
 
             Console.WriteLine("Reading file...");
-            Boolean first_line = true;
-            foreach (string line in lines)
+            var firstLine = true;
+            foreach (var line in lines)
             {
                 try
                 {
-                    if (first_line)
+                    if (firstLine)
                     {
-                        first_line = false;
+                        firstLine = false;
                     }
                     else
                     {
                         var tokens = line.Split(',');
-                        for (int i = 0; i < tokens.Length; i++)
-                            tokens[i] = tokens[i].Trim();
+                        for (var token = 0; token < tokens.Length; token++)
+                            tokens[token] = tokens[token].Trim();
 
                         if (tokens.Length == 4)
                         {
