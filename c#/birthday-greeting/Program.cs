@@ -12,27 +12,7 @@ public static class Program
             var lines = File.ReadAllLines(fileName);
 
             Console.WriteLine("Reading file...");
-            var firstLine = true;
-            // Boucle sur toutes les lignes
-            foreach (var line in lines)
-            {
-                try
-                {
-                    // Si première ligne ne pas faire le traitement
-                    if (firstLine)
-                    {
-                        firstLine = false;
-                    }
-                    else
-                    {
-                        ProcessLine(line);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                }
-            }
+            ProcessFile(lines);
 
             Console.WriteLine("Batch job done.");
         }
@@ -46,6 +26,31 @@ public static class Program
         }
 
         Console.ReadLine();
+    }
+
+    private static void ProcessFile(string[] lines)
+    {
+        var firstLine = true;
+        // Boucle sur toutes les lignes
+        foreach (var line in lines)
+        {
+            try
+            {
+                // Si première ligne ne pas faire le traitement
+                if (firstLine)
+                {
+                    firstLine = false;
+                }
+                else
+                {
+                    ProcessLine(line);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+        }
     }
 
     private static void ProcessLine(string line)
@@ -72,7 +77,7 @@ public static class Program
                 // Si la date d'anniversaire correspond à la date du jour alors on envoie un email
                 if (currentDate.Day == int.Parse(date[0]) && currentDate.Month == int.Parse(date[1]))
                 {
-                    SendEmail(tokens[3], "Joyeux Anniversaire !",
+                    EmailBroker.SendEmail(tokens[3], "Joyeux Anniversaire !",
                         "Bonjour " + tokens[0] + ",\nJoyeux Anniversaire !\nA bientôt,");
                 }
             }
@@ -85,13 +90,5 @@ public static class Program
         {
             throw new Exception("Invalid file format");
         }
-    }
-
-    private static void SendEmail(string to, string title, string body)
-    {
-        Console.WriteLine("Sending email to : " + to);
-        Console.WriteLine("Title: " + title);
-        Console.WriteLine("Body: Body\n" + body);
-        Console.WriteLine("-------------------------");
     }
 }
