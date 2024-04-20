@@ -52,53 +52,46 @@ public static class Program
 
     private static void ProcessLine(string line)
     {
+        var employee = CreateEmployeeFromLineFile(line);
+
+        if (employee.IsBirthday())
+        {
+            EmailBroker.SendMessage(
+                employee.Email,
+                "Joyeux Anniversaire !",
+                $"Bonjour {employee.FirstName},\nJoyeux Anniversaire !\nA bientôt,");
+        }
+    }
+
+    private static Employee CreateEmployeeFromLineFile(string line)
+    {
         var tokens = GetElementsLine(line);
 
-        CleanTokens(tokens);
+        return new Employee(tokens[0], tokens[1], ConvertStringToDateTime(tokens[2]), tokens[3]);
+    }
 
-        if (IsTokensLengthValid(tokens))
+    private static DateTime ConvertStringToDateTime(string token)
+    {
+        try
         {
-            var employee = new Employee(tokens[0], tokens[1], new Date(tokens[2]), tokens[3]);
-
-            var elementsDate = GetElementsDate(employee.Birthday.Value);
-
-            if (IfDateValid(elementsDate))
-            {
-                if (IsBirthday(elementsDate))
-                {
-                    EmailBroker.SendMessage(
-                        employee.Email,
-                        "Joyeux Anniversaire !",
-                        $"Bonjour {employee.FirstName},\nJoyeux Anniversaire !\nA bientôt,");
-                }
-            }
-            else
-            {
-                throw new Exception($"Cannot read birthdate for {employee.FirstName} {employee.LastName}");
-            }
+            return Convert.ToDateTime(token);
         }
-        else
+        catch (FormatException)
         {
             throw new Exception("Invalid file format");
         }
     }
 
-    private static string[] GetElementsLine(string line) => line.Split(',');
-
-    private static string[] GetElementsDate(string date) => date.Split('/');
-
-    private static void CleanTokens(IList<string> tokens)
+    private static string[] GetElementsLine(string line)
     {
-        for (var token = 0; token < tokens.Count; token++)
+        var tokens = line.Split(',').Select(l => l.Trim()).ToArray();
+        if (IsTokensLengthValid(tokens))
         {
-            tokens[token] = tokens[token].Trim();
+            return tokens;
         }
+
+        throw new Exception("Invalid file format");
     }
 
     private static bool IsTokensLengthValid(IReadOnlyCollection<string> tokens) => tokens.Count == 4;
-
-    private static bool IsBirthday(IReadOnlyList<string> date) =>
-        Now.Day == int.Parse(date[0]) && Now.Month == int.Parse(date[1]);
-
-    private static bool IfDateValid(IReadOnlyCollection<string> date) => date.Count == 3;
 }
