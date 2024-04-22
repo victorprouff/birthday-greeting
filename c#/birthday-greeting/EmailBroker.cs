@@ -1,8 +1,8 @@
 namespace birthday_greeting;
 
-public static class EmailBroker
+public class EmailBroker
 {
-    public static void SendMessage(string to, string title, string body)
+    public void SendMessage(string to, string title, string body)
     {
         Console.WriteLine($"Sending email to : {to}");
         Console.WriteLine($"Title: {title}");
