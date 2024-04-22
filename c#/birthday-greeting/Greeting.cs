@@ -1,6 +1,6 @@
 namespace birthday_greeting;
 
-public class Greeting
+public class Greeting(IMessage message)
 {
     public void LoadFile()
     {
@@ -28,7 +28,7 @@ public class Greeting
         Console.ReadLine();
     }
 
-    private static void ProcessFile(IList<string> lines)
+    private void ProcessFile(IList<string> lines)
     {
         RemoveFirstLine(lines);
 
@@ -50,17 +50,13 @@ public class Greeting
         lines.RemoveAt(0);
     }
 
-    private static void ProcessLine(string line)
+    private void ProcessLine(string line)
     {
         var employee = CreateEmployeeFromLineFile(line);
 
         if (employee.IsBirthday())
         {
-            var emailBroker = new EmailBroker();
-            emailBroker.SendMessage(
-                employee.Email,
-                "Joyeux Anniversaire !",
-                $"Bonjour {employee.FirstName},\nJoyeux Anniversaire !\nA bientôt,");
+            message.Send(employee.Email, employee.FirstName);
         }
     }
 
