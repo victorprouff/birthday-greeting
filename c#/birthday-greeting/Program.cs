@@ -4,7 +4,7 @@ public static class Program
 {
     private static void Main()
     {
-        var greeting = new Greeting(new EmailMessage());
+        var greeting = new Greeting(new EmailMessage(new EmailBrocker()));
         greeting.LoadFile();
     }
 }
